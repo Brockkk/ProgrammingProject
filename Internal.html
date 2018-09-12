@@ -1,0 +1,82 @@
+<!doctype html>
+
+<body>
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <script>
+        var canvas, canvasContext;
+
+        window.onload = function() {
+            canvas = document.getElementById('gameCanvas');
+            canvasContext = canvas.getContext('2d');
+            document.addEventListener('keydown', keyPressed);
+            document.addEventListener('keyup', keyReleased);
+
+            setInterval(mainLoop, 1000 / 50);
+        }
+
+        var playerLank = 20;
+        var playerThicc = 20;
+        var playerXpos = 0;
+        var playerYpos = 0;
+        var playerXspeed = 5;
+        var setUp = true;
+        
+        
+        var leftArrowPressed = false;
+        var rightArrowPressed = false;
+
+
+
+        function mainLoop() {
+            colorRect(0, 0, canvas.width, canvas.height, 'black') //bg
+            colorRect(playerXpos, playerYpos, playerLank, playerThicc, 'red') //ball
+
+            if (setUp) {
+                playerSetUp();
+                setUp = false;
+            }
+
+            playerMove();
+        }
+
+
+        function colorRect(x, y, w, h, color) {
+            canvasContext.fillStyle = color;
+            canvasContext.fillRect(x, y, w, h);
+        }
+
+        function keyPressed(evt) {
+            console.log(evt.keyCode) // in console with state the number associated with the key pressed 
+            if (evt.keyCode == 37) { // 37 should be a const   
+                leftArrowPressed = true; // opposite should be done for keyRelease function  
+            }
+            if (evt.keyCode == 39) { // 37 should be a const   
+                rightArrowPressed = true; // opposite should be done for keyRelease function  
+            }
+        }
+
+        function keyReleased(evt) {
+            if (evt.keyCode == 37) { // 37 should be a const  
+                leftArrowPressed = false; // opposite should be done for keyRelease function 
+            }
+             if (evt.keyCode == 39) { // 37 should be a const  
+                rightArrowPressed = false; // opposite should be done for keyRelease function 
+            }
+        }
+
+        function playerMove() {
+            if (leftArrowPressed && playerXpos > 5) {
+                playerXpos -= playerXspeed;
+            }
+            if (rightArrowPressed && playerXpos < canvas.width - playerThicc - 5){
+                playerXpos += playerXspeed
+            }
+        }
+
+        function playerSetUp() {
+            playerYpos = canvas.height - playerLank - 10;
+            playerXpos = canvas.width / 2 - playerThicc / 2;
+        }
+
+    </script>
+</body>
