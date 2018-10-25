@@ -4,7 +4,7 @@
     <canvas id="gameCanvas" width="400" height="400"></canvas>
     <script>
         var canvas, canvasContext,imgAssests;
-
+        
         window.onload = function() {
             canvas = document.getElementById('gameCanvas');
             canvasContext = canvas.getContext('2d');
@@ -16,19 +16,15 @@
             setInterval(mainLoop, 1000 / 50);
         }
 
-        var playerLank = 50;
-        var playerThicc = 50;
+        var playerLank = 40;
+        var playerThicc = 40;
         var playerXpos = 0;
         var playerYpos = 0;
         var playerXspeed = 5;
         var setUp = true;
 
-        var kunaiXpos = 0;
-        var kunaiYpos = 0;
-        var kunaiThicc = 10;
-        var kunaiLank = 20;
-        var kunaiYspeed = 5;
-        var kunaiCount = 10;
+     
+        var kunaiCount = 7;
         var kunais = [];
         var kunaiSetUp = true;
 
@@ -38,17 +34,19 @@
 
 
         function mainLoop() {
-            colorRect(0, 0, canvas.width, canvas.height, 'black') //bg
-           // colorRect(playerXpos, playerYpos, playerLank, playerThicc, 'red') //ball
+            
+        colorRect(0, 0, canvas.width, canvas.height, 'black') //bg
+//        colorRect(kunaiXpos, kunaiYpos, kunaiThicc,kunaiLank , 'red') //kunai
             
             makeImages(Img.player, playerXpos, playerYpos, playerLank, playerThicc);
             
             if (setUp) {
                 playerSetUp();
+                kunaiSettingUp();
                 setUp = false;
             }
-
             playerMove();
+            kunaiFall();
 
         }
 
@@ -56,13 +54,18 @@
         function loadImgAssests() {
 
             Img = {}; // making an img object 
-
+            
+            
+            
             Img.player = new Image(); // creating an new player object that is an image 
 
             Img.player.src = 'images/player.png' // locates the images 
 
+                        Img.kunai = new Image(); // creating an new player object that is an image 
 
-
+            
+                        Img.kunai.src = 'images/kunai.png' // locates the images 
+            
             return Img; // makes the img object to be useable to draw an image 
 
         }
@@ -97,7 +100,7 @@
 
         function kunaiSettingUp() {
             for (i = 0; i <= kunaiCount; i++) {
-                kunaiArray.push(randomBlock())
+                kunais.push(randomKunai())
             }
             kunaiSetUp = false
 
@@ -106,16 +109,43 @@
 
 
         function randomKunai() {
+            var kunaiXpos = 0;
+            var kunaiYpos = -60;
+            var kunaiThicc = 7.5;
+            var kunaiLank = 20;
+            var kunaiYspeed = Math.floor(Math.random() * (7 - 2) + 2);
+            var randKunaiSize =  Math.floor(Math.random() * (30 - 15) + 15);
+            
             var newKunaiRand = {
-                randKunaiSize: 20,
-                kunaiXpos: Math.floor(Math.random() * (canvas.width - randBlockSize - 0)) + 0,
+                KunaiWidth: kunaiThicc,
+                KunaiHeight: kunaiLank,
+                kunaiXpos: Math.floor(Math.random() * (400 - 0) + 0),
                 kunaiYpos: 0,
-                kunaiYspeed: Math.floor(Math.random() * (10 - 0)) + 1,
+                kunaiYspeed: Math.floor(Math.random() * (8 - 4)) + 4,
+                kunaiYspeed: kunaiYspeed
             }
             return newKunaiRand;
         }
 
 
+        function kunaiFall(){
+            kunais.forEach(function(kunai,index){
+                makeImages(Img.kunai, kunai.kunaiXpos,kunai.kunaiYpos,kunai.KunaiWidth,kunai.KunaiHeight);
+                kunai.kunaiYpos += kunai.kunaiYspeed;
+                
+                if(kunai.kunaiYpos > canvas.height){
+                    kunai.kunaiYpos = 0 - kunai.KunaiHeight; 
+                    kunai.kunaiXpos = Math.floor(Math.random() * ((canvas.width - kunai.KunaiWidth)) + 0);
+                    kunai.kunaiYspeed = Math.floor(Math.random() * (8 - 4)) + 4;
+
+                    
+                   }
+                if(kunai.kunaiYpos + kunai.KunaiHeight > playerYpos && kunai.kunaiXpos + kunai.KunaiWidth > playerXpos && kunai.kunaiXpos < playerXpos + playerThicc){
+                   playerXpos = 0;
+                }
+            });
+        }
+        
         function playerMove() {
             if (leftArrowPressed && playerXpos > 5) {
                 playerXpos -= playerXspeed;
